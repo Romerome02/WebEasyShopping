@@ -9,7 +9,7 @@
             <li class="active">Estantes</li>
         </ol>
     </div>
-</div>Rromero920213
+</div>
 
 <div class="wrapper">
     <div class="col-md-12">
@@ -95,58 +95,3 @@
 <script src="<%= request.getContextPath()%>/js/d3.v3.js" charset="utf-8"></script>
 <script src="<%= request.getContextPath()%>/js/FileSaver.min.js"></script>
 <script src="<%= request.getContextPath()%>/js/graph-creator.js"></script>
-<script>
-                                        $(document).ready(function () {
-                                            var svg = d3.select("#disena").append("svg")
-                                                    .attr("width", '100%')
-                                                    .attr("height", '100%');
-                                            var graph = new GraphCreator(svg);
-
-                                            $.post('php/api.php', {modulo: 'estantes', accion: 'obtener'}, function (data) {
-                                                var estantes = JSON.parse(data);
-                                                graph.nodes = estantes.nodos;
-                                                graph.setIdCt(estantes.nodos.length);
-                                                graph.edges = estantes.aristas.map(e => ({
-                                                        source: graph.nodes.find(n => n.id == e.id_nodo_origen),
-                                                        target: graph.nodes.find(n => n.id == e.id_nodo_destino)
-                                                    }));
-                                                graph.updateGraph();
-                                                $('#guardar_plano').prop('disabled', true);
-                                            });
-
-                                            $('#guardar_plano').click(function () {
-                                                $('#guardar_plano').prop('disabled', true);
-                                                $.post('php/api.php', {
-                                                    modulo: 'estantes',
-                                                    accion: 'agregar',
-                                                    nodos: JSON.stringify(graph.nodes),
-                                                    aristas: JSON.stringify(graph.edges)
-                                                }, function (data) {
-                                                    console.log(data);
-                                                });
-                                            });
-
-                                            $('#cambiar_plano').click(function (event) {
-                                                event.preventDefault();
-                                                $('#imagen_plano').click();
-                                            });
-
-                                            $("#imagen_plano:file").change(function () {
-                                                $('#form_plano').submit();
-                                            });
-
-                                            $("form#form_plano").submit(function (e) {
-                                                e.preventDefault();
-                                                $.ajax({
-                                                    url: 'php/api.php',
-                                                    type: 'POST',
-                                                    data: new FormData(this),
-                                                    processData: false,
-                                                    contentType: false
-                                                }).done(function (resultado) {
-                                                    location.reload();
-                                                });
-                                            });
-                                        });
-</script>
-
